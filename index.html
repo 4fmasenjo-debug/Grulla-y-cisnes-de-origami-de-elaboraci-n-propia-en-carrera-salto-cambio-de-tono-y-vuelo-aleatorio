@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Origami animado</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      height: 100vh;
+      background-color: #fdf6e3;
+      overflow: hidden;
+      position: relative; /* para posición absoluta de los cisnes */
+    }
+
+    .run, .jump, .fly {
+      width: 200px;
+      height: 200px;
+      transform-origin: center;
+    }
+
+    .run {
+      animation: run 4s linear infinite;
+    }
+
+    .jump {
+      animation: jump 2s ease-in-out infinite;
+    }
+
+    .fly {
+      animation: fly 6s ease-in-out infinite;
+      cursor: pointer;
+    }
+
+    /* Cisne que sigue el cursor */
+    #cursor-cisne {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      pointer-events: auto; /* si recibe clicks para cambiar color */
+      left: 0;
+      top: 0;
+      transition: left 0.1s ease, top 0.1s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Cisne que se mueve aleatoriamente */
+    #random-cisne {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      left: 0;
+      top: 0;
+      pointer-events: none; /* no bloquea eventos */
+      transition: left 2s ease, top 2s ease; /* suaviza el movimiento */
+    }
+
+    @keyframes run {
+      0% {
+        transform: translateX(-100%) scale(1);
+      }
+      50% {
+        transform: translateX(100%) scale(1.05);
+      }
+      100% {
+        transform: translateX(-100%) scale(1);
+      }
+    }
+
+    @keyframes jump {
+      0%, 100% {
+        transform: translateY(0px) scale(1);
+      }
+      50% {
+        transform: translateY(-20px) scale(1.05);
+      }
+    }
+
+    @keyframes fly {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+      25% {
+        transform: translate(50px, -30px) scale(1.05);
+      }
+      50% {
+        transform: translate(100px, -60px) scale(1.1);
+      }
+      75% {
+        transform: translate(150px, -30px) scale(1.05);
+      }
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+    }
+
+    /* Animación de aleteo para las alas */
+    @keyframes flap {
+      0%, 100% {
+        transform: rotate(0deg);
+      }
+      50% {
+        transform: rotate(10deg);
+      }
+    }
+
+    /* Ala izquierda */
+    .wing {
+      transform-origin: 130px 160px; /* punto de rotación ala izquierda */
+      animation: flap 1.5s ease-in-out infinite;
+    }
+
+    /* Ala derecha */
+    .wing.right {
+      transform-origin: 210px 130px; /* punto de rotación ala derecha */
+      animation: flap 1.5s ease-in-out infinite;
+      animation-direction: alternate; /* para variar el movimiento */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Grulla que CORRE -->
+  <svg class="run" viewBox="0 0 280 300">
+    <polygon points="50,150 45,111 65,123" fill="#43486B"/> 
+    <polygon points="165,30 210,160 115,160" fill="#D9AC1A"/>
+    <polygon points="55,89 49,111 115,160 135,127" fill="#E81E2F"/>
+    <polygon points="50,150 49,111 65,123" fill="#5D3DC7"/> 
+    <polygon points="170,150 210,160 250,55" fill="#DB2134"/>
+    <polygon points="165,80 210,160 115,160" fill="#16C453"/>
+    <polygon points="165,300 210,160 115,160" fill="#FFCC1F"/>
+  </svg>
+
+  <!-- aa que SALTA -->
+  <svg class="jump" viewBox="0 0 280 300"> 
+    <polygon points="50,150 45,111 65,123" fill="#FA8015"/> 
+    <polygon points="240,77 220,140 115,160" fill="#F7EA00"/>
+    <polygon points="55,89 49,111 115,160 135,127" fill="#FF0000"/> 
+    <polygon points="50,150 49,111 65,123" fill="#F7AB00"/>  
+    <polygon points="230,154 199,190 130,180 111,160 130,125" fill="#BA00BF"/>
+    <polygon points="180,110 210,140 115,160 111,140 117,125" fill="#00C7EB"/>
+    <polygon points="175,109 209,140 229,110" fill="#04CA00"/>
+    <polygon points="175,109 225,155 225,120" fill="#04ED00"/>
+    <polygon points="270,175 220,135 115,160" fill="#E6FF00"/>
+  </svg>
+
+  <!-- AA que vuela -->
+  <svg class="fly" viewBox="0 0 280 300"> 
+    <polygon class="color-part" points="50,150 45,111 65,123" fill="#FA8015"/> 
+    <polygon class="color-part" points="240,77 220,140 115,160" fill="#F7EA00"/>
+    <polygon class="color-part" points="55,89 49,111 115,160 135,127" fill="#FF0000"/> 
+    <polygon class="color-part" points="50,150 49,111 65,123" fill="#F7AB00"/>  
+    <polygon class="color-part" points="230,154 199,190 130,180 111,160 130,125" fill="#BA00BF"/>
+    <polygon class="color-part" points="180,110 210,140 115,160 111,140 117,125" fill="#00C7EB"/>
+    <polygon class="color-part" points="175,109 209,140 229,110" fill="#04CA00"/>
+    <polygon class="color-part" points="175,109 225,155 225,120" fill="#04ED00"/>
+    <polygon class="color-part" points="270,175 220,135 115,160" fill="#E6FF00"/>
+  </svg>  
+  
+  <!-- aa que se mueve aleatoriamente con alas animadas -->
+  <svg id="random-cisne" viewBox="0 0 280 300"> 
+    <polygon points="50,150 45,111 65,123" fill="#FA8015"/> 
+    <polygon points="240,77 220,140 115,160" fill="#F7EA00"/>
+    <polygon points="55,89 49,111 115,160 135,127" fill="#FF0000"/> 
+    <polygon points="50,150 49,111 65,123" fill="#F7AB00"/>  
+    <polygon class="wing" points="230,154 199,190 130,180 111,160 130,125" fill="#BA00BF"/>
+    <polygon points="180,110 210,140 115,160 111,140 117,125" fill="#00C7EB"/>
+    <polygon class="wing right" points="175,109 209,140 229,110" fill="#04CA00"/>
+    <polygon points="175,109 225,155 225,120" fill="#04ED00"/>
+    <polygon points="270,175 220,135 115,160" fill="#E6FF00"/>
+  </svg>
+
+  <!-- Cisne que sigue el cursor y cambia color al hacer clic con alas animadas -->
+  <svg id="cursor-cisne" class="change-color" viewBox="0 0 280 300"> 
+    <polygon class="color-part" points="50,150 45,111 65,123" fill="#FA8015"/> 
+    <polygon class="color-part" points="240,77 220,140 115,160" fill="#F7EA00"/>
+    <polygon class="color-part" points="55,89 49,111 115,160 135,127" fill="#FF0000"/> 
+    <polygon class="color-part" points="50,150 49,111 65,123" fill="#F7AB00"/>  
+    <polygon class="color-part wing" points="230,154 199,190 130,180 111,160 130,125" fill="#BA00BF"/>
+    <polygon class="color-part" points="180,110 210,140 115,160 111,140 117,125" fill="#00C7EB"/>
+    <polygon class="color-part wing right" points="175,109 209,140 229,110" fill="#04CA00"/>
+    <polygon class="color-part" points="175,109 225,155 225,120" fill="#04ED00"/>
+    <polygon class="color-part" points="270,175 220,135 115,160" fill="#E6FF00"/>
+  </svg>
+  
+  <script>
+    // Cambia color de todos los SVGs con clase .change-color al hacer clic
+    document.querySelectorAll('.change-color').forEach(svg => {
+      svg.addEventListener('click', function () {
+        this.querySelectorAll('.color-part').forEach(polygon => {
+          polygon.setAttribute('fill', '#' + Math.floor(Math.random() * 16777215).toString(16));
+        });
+      });
+    });
+
+    // Cisne que sigue el cursor
+    const cursorCisne = document.getElementById('cursor-cisne');
+    document.addEventListener('mousemove', (e) => {
+      const x = e.clientX - cursorCisne.clientWidth / 2;
+      const y = e.clientY - cursorCisne.clientHeight / 2;
+      cursorCisne.style.left = `${x}px`;
+      cursorCisne.style.top = `${y}px`;
+    });
+
+    // Cisne que se mueve aleatoriamente
+    const randomCisne = document.getElementById('random-cisne');
+
+    function moveRandom() {
+      const maxX = window.innerWidth - randomCisne.clientWidth;
+      const maxY = window.innerHeight - randomCisne.clientHeight;
+
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+
+      randomCisne.style.left = `${x}px`;
+      randomCisne.style.top = `${y}px`;
+    }
+
+    // Mueve cada 3 segundos
+    setInterval(moveRandom, 3000);
+    // Posición inicial
+    moveRandom();
+  </script>
+</body>
+</html>
+
+
+
+
+
+
